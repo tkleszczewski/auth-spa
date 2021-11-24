@@ -1,57 +1,36 @@
-import React from 'react';
-import logo from './logo.svg';
-import { Counter } from './features/counter/Counter';
-import './App.css';
+import React, { Fragment } from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+
+import { GlobalStyles } from "./App.styles";
+
+import Auth from "./views/auth/Auth";
+import SignInForm from "./views/auth/sign-in-form/SignInForm";
+import SignUpForm from "./views/auth/sign-up-form/SignUpForm";
+
+import Main from "./views/main/Main";
+import Home from "./views/main/home/Home";
+import Protected from "./views/main/protected/Protected";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <Counter />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <span>
-          <span>Learn </span>
-          <a
-            className="App-link"
-            href="https://reactjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux-toolkit.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux Toolkit
-          </a>
-          ,<span> and </span>
-          <a
-            className="App-link"
-            href="https://react-redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React Redux
-          </a>
-        </span>
-      </header>
-    </div>
+    <Fragment>
+      <GlobalStyles />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Main />}>
+            <Route path="*" element={<Navigate to="/" />} />
+            <Route index element={<Home />} />
+            <Route path="protected" element={<Protected />} />
+            <Route path="auth" element={<Auth />}>
+              <Route index element={<Navigate to="/auth/sign-in" />} />
+              <Route path="*" element={<Navigate to="/auth/sign-in" />} />
+              <Route path="sign-in" element={<SignInForm />} />
+              <Route path="sign-up" element={<SignUpForm />} />
+            </Route>
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </Fragment>
   );
 }
 
