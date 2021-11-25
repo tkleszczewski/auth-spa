@@ -11,6 +11,12 @@ import {
   SwitchContainer,
   SwitchLabelText,
   SwitchLabel,
+  MainHeaderWidthLimiter,
+  MainOutletContainer,
+  MainNav,
+  MainNavLinkContainer,
+  MainNavLinksContainer,
+  MainNavLink,
 } from "./Main.styles";
 
 const Main: React.FC = () => {
@@ -45,22 +51,43 @@ const Main: React.FC = () => {
   return (
     <MainContainer>
       <MainHeader>
-        <MainHeading>Auth with protected routes</MainHeading>
-        <SwitchContainer>
-          <SwitchLabel>
-            <SwitchLabelText>Toggle dark-mode</SwitchLabelText>
-            <Switch
-              uncheckedIcon={false}
-              checkedIcon={false}
-              onColor="#888"
-              activeBoxShadow="none"
-              checked={isDarkModeOn}
-              onChange={onDarkModeToggle}
-            />
-          </SwitchLabel>
-        </SwitchContainer>
+        <MainHeaderWidthLimiter>
+          <MainHeading>Authapp</MainHeading>
+          <SwitchContainer>
+            <SwitchLabel>
+              <SwitchLabelText>Toggle dark-mode</SwitchLabelText>
+              <Switch
+                uncheckedIcon={false}
+                checkedIcon={false}
+                onColor="#888"
+                activeBoxShadow="none"
+                checked={isDarkModeOn}
+                onChange={onDarkModeToggle}
+                height={16}
+                width={44}
+                handleDiameter={20}
+                boxShadow="0 0 2px 1px rgba(0, 0, 0, 0.4)"
+              />
+            </SwitchLabel>
+          </SwitchContainer>
+        </MainHeaderWidthLimiter>
       </MainHeader>
-      <Outlet></Outlet>
+      <MainNav>
+        <MainNavLinksContainer>
+          <MainNavLinkContainer>
+            <MainNavLink to="/">Home</MainNavLink>
+          </MainNavLinkContainer>
+          <MainNavLinkContainer>
+            <MainNavLink to="/auth">Login</MainNavLink>
+          </MainNavLinkContainer>
+          <MainNavLinkContainer>
+            <MainNavLink to="/protected">Protected route</MainNavLink>
+          </MainNavLinkContainer>
+        </MainNavLinksContainer>
+      </MainNav>
+      <MainOutletContainer>
+        <Outlet></Outlet>
+      </MainOutletContainer>
     </MainContainer>
   );
 };

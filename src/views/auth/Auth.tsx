@@ -1,9 +1,12 @@
 import { Outlet } from "react-router-dom";
-
-import { AuthContainer, AuthHeader, AuthHeading } from "./Auth.styles";
+import { AuthContainer } from "./Auth.styles";
 
 const Auth: React.FC = () => {
-  return <Outlet></Outlet>;
+  return (
+    <AuthContainer>
+      <Outlet></Outlet>
+    </AuthContainer>
+  );
 };
 
 export default Auth;
