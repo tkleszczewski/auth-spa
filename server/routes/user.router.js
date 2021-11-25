@@ -141,4 +141,20 @@ router.post("/sign-in", async (req, res) => {
   }
 });
 
+router.post("/is-unique", async (req, res) => {
+  const { email } = req.body;
+  try {
+    const user = await User.findOne({ email });
+    if (user) {
+      return res.status(200).json({ success: true, user });
+    } else {
+      return res.status(404).json({ success: true, user: null });
+    }
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ success: false, message: "Something went wrong" });
+  }
+});
+
 module.exports = router;

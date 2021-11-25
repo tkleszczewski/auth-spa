@@ -28,6 +28,11 @@ const LoginButton = styled.button`
   border-radius: 4px;
   font-size: 1.3rem;
   cursor: pointer;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 `;
 
 const LoginFormLink = styled(Link)`

@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import COLORS from "../../utils/colors";
 
 const FormControlContainer = styled.div``;
 
@@ -19,4 +20,10 @@ const FormInput = styled.input`
   }
 `;
 
-export { FormControlContainer, FormLabel, FormInput };
+const FormError = styled.p`
+  font-size: 1.3rem;
+  padding: 4px 0px;
+  color: ${COLORS.red};
+`;
+
+export { FormControlContainer, FormLabel, FormInput, FormError };

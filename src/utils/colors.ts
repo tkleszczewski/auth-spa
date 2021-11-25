@@ -5,6 +5,7 @@ const COLORS = {
   secondaryBackgroundColor: "#2D2D2D",
   green: "#0FE9A0",
   yellow: "#DBE723",
+  red: "#ee4444",
 };
 
 export default COLORS;
