@@ -148,7 +148,7 @@ router.post("/is-unique", async (req, res) => {
     if (user) {
       return res.status(200).json({ success: true, user });
     } else {
-      return res.status(404).json({ success: true, user: null });
+      return res.status(404).json({ success: false, user: null });
     }
   } catch (err) {
     return res

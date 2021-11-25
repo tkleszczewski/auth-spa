@@ -11,4 +11,10 @@ const signUpUser = async (values: {
   return data;
 };
 
-export { signUpUser };
+const isUserUnique = async (email: string | undefined) => {
+  const response = await axios.post(`${baseUserUrl}/is-unique`, { email });
+  const { data } = response;
+  return !data.user;
+};
+
+export { signUpUser, isUserUnique };

@@ -1,5 +1,5 @@
 import { useFormik } from "formik";
-import { signUpUser } from "../../../services/user.service";
+import { signUpUser, isUserUnique } from "../../../services/user.service";
 import * as Yup from "yup";
 
 import {
@@ -17,8 +17,51 @@ import {
   LoginFormTitle,
 } from "../../../components/forms/LoginForm";
 import passwordRegex from "../../../utils/password";
+import { useMemo } from "react";
+
+const createDebouncedIsUserUniqueTestFunction = () => {
+  const timeoutTime = 400;
+  let id: any = null;
+  return async (email: string | undefined) => {
+    clearTimeout(id);
+    const isUnique = await new Promise<boolean>(async (resolve, reject) => {
+      id = setTimeout(async () => {
+        try {
+          const isUniqueResponse = await isUserUnique(email);
+          resolve(isUniqueResponse);
+        } catch (error) {
+          resolve(true);
+        }
+      }, timeoutTime);
+    });
+    return isUnique;
+  };
+};
 
 const SignUpForm: React.FC = () => {
+  const validationSchema = useMemo(() => {
+    return Yup.object().shape({
+      email: Yup.string()
+        .email("invalid format of email")
+        .required("email is required")
+        .test(
+          "unique-email",
+          "this email already exists",
+          createDebouncedIsUserUniqueTestFunction()
+        ),
+      password: Yup.string()
+        .matches(
+          passwordRegex,
+          "password should be at least 8 characters long and include at least one uppercase one lowercase one number and one special character"
+        )
+        .required("password is required"),
+      confirmPassword: Yup.string()
+        .required("password confirmation is required")
+        .test("passwords-match", "passwords must match", function (value) {
+          return this.parent.password === value;
+        }),
+    });
+  }, []);
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -33,22 +76,7 @@ const SignUpForm: React.FC = () => {
         alert(error.response.data.message);
       }
     },
-    validationSchema: Yup.object({
-      email: Yup.string()
-        .email("invalid format of email")
-        .required("email is required"),
-      password: Yup.string()
-        .matches(
-          passwordRegex,
-          "password should be at least 8 characters long and include at least one uppercase one lowercase one number and one special character"
-        )
-        .required("password is required"),
-      confirmPassword: Yup.string()
-        .test("passwords-match", "passwords must match", function (value) {
-          return this.parent.password === value;
-        })
-        .required("password confirmation is required"),
-    }),
+    validationSchema,
   });
 
   return (
