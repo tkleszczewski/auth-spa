@@ -18,11 +18,11 @@ import {
   LoginFormTitle,
 } from "../../../components/forms/LoginForm";
 
-import { signUpUser, isUserUnique } from "../../../services/user.service";
+import { isUserUnique } from "../../../services/user.service";
 
 import passwordRegex from "../../../utils/password";
 
-import { userSignedUp } from "../../../store/auth/auth.slice";
+import { signUpUser } from "../../../store/auth/auth.slice";
 import { AppDispatch } from "../../../store/store";
 
 const createDebouncedIsUserUniqueTestFunction = () => {
@@ -79,18 +79,7 @@ const SignUpForm: React.FC = () => {
       confirmPassword: "",
     },
     onSubmit: async (values) => {
-      try {
-        const data = await signUpUser(values);
-        const { accessToken, user } = data;
-        localStorage.setItem("accessToken", accessToken);
-        dispatch(userSignedUp({ accessToken, user, isUserLoggedIn: true }));
-      } catch (error: any) {
-        localStorage.setItem("accessToken", "");
-        dispatch(
-          userSignedUp({ accessToken: "", user: null, isUserLoggedIn: false })
-        );
-        alert(error.response.data.message);
-      }
+      await dispatch(signUpUser(values));
     },
     validationSchema,
   });

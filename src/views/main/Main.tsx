@@ -5,10 +5,10 @@ import Switch from "react-switch";
 
 import COLORS from "../../utils/colors";
 
-import { checkAuthToken } from "../../services/auth.service";
+import { checkToken } from "../../store/auth/auth.slice";
 
 import { AppDispatch, RootState } from "../../store/store";
-import { tokenChecked, userLoggedOut } from "../../store/auth/auth.slice";
+import { userLoggedOut } from "../../store/auth/auth.slice";
 
 import PuffLoader from "react-spinners/PuffLoader";
 
@@ -66,25 +66,13 @@ const Main: React.FC = () => {
   }, [isDarkModeOn]);
 
   useEffect(() => {
-    async function checkToken() {
-      try {
-        setCheckTokenRequestPending(true);
-        const data = await checkAuthToken();
-        setCheckTokenRequestPending(false);
-        if (data && data.success && data.message === "token valid") {
-          const { accessToken, user } = data;
-          dispatch(tokenChecked({ accessToken, user, isUserLoggedIn: true }));
-        } else {
-          return;
-        }
-      } catch (err: any) {
-        if (err.reponse) {
-          alert(err.response.data.message);
-        }
-        setCheckTokenRequestPending(false);
-      }
+    async function checkTokenRequest() {
+      setCheckTokenRequestPending(true);
+      await dispatch(checkToken());
+      setCheckTokenRequestPending(false);
     }
-    checkToken();
+
+    checkTokenRequest();
   }, [dispatch]);
 
   const onDarkModeToggle = (checked: boolean) => {

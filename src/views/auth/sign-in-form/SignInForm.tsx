@@ -17,10 +17,10 @@ import {
   FormInput,
   FormError,
 } from "../../../components/forms/Forms";
-import { signInUser } from "../../../services/user.service";
 
-import { userSignedIn } from "../../../store/auth/auth.slice";
 import { AppDispatch } from "../../../store/store";
+
+import { signInUser } from "../../../store/auth/auth.slice";
 
 import passwordRegex from "../../../utils/password";
 
@@ -44,18 +44,7 @@ const SignInForm: React.FC = () => {
         .required("password is required"),
     }),
     onSubmit: async (values: { email: string; password: string }) => {
-      try {
-        const data = await signInUser(values);
-        const { accessToken, user } = data;
-        localStorage.setItem("accessToken", accessToken);
-        dispatch(userSignedIn({ accessToken, user, isUserLoggedIn: true }));
-      } catch (err: any) {
-        localStorage.setItem("accessToken", "");
-        dispatch(
-          userSignedIn({ accessToken: "", user: null, isUserLoggedIn: false })
-        );
-        alert(err.response.data.message);
-      }
+      await dispatch(signInUser(values));
     },
   });
 

@@ -2,7 +2,14 @@ import axios from "axios";
 
 const authApiUrl = "/api/auth";
 
-export const checkAuthToken = async () => {
+interface CheckTokenDTO {
+  user: { email: string } | null;
+  accessToken: string;
+  success: boolean;
+  message?: string;
+}
+
+export const checkAuthToken = async (): Promise<CheckTokenDTO> => {
   const accessToken = localStorage.getItem("accessToken");
   if (accessToken) {
     const response = await axios.post(
@@ -12,6 +19,6 @@ export const checkAuthToken = async () => {
     );
     return response.data;
   } else {
-    return null;
+    return { user: null, accessToken: "", success: false };
   }
 };
