@@ -3,11 +3,12 @@ import { Outlet } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Switch from "react-switch";
 
+import COLORS from "../../utils/colors";
+
 import { checkAuthToken } from "../../services/auth.service";
 
+import { AppDispatch, RootState } from "../../store/store";
 import { tokenChecked, userLoggedOut } from "../../store/auth/auth.slice";
-
-import COLORS from "../../utils/colors";
 
 import {
   MainContainer,
@@ -27,11 +28,13 @@ import {
 } from "./Main.styles";
 
 const Main: React.FC = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const [isDarkModeOn, setIsDarkModeOn] = useState<boolean>(false);
   const [checkTokenRequestPending, setCheckTokenRequestPending] =
     useState<boolean>(true);
-  const isUserLoggedIn = useSelector((state: any) => state.auth.isUserLoggedIn);
+  const isUserLoggedIn = useSelector(
+    (state: RootState) => state.auth.isUserLoggedIn
+  );
 
   const handleLogout = useCallback(() => {
     localStorage.removeItem("accessToken");

@@ -1,6 +1,6 @@
 import { useFormik } from "formik";
+import { useDispatch } from "react-redux";
 import * as Yup from "yup";
-import passwordRegex from "../../../utils/password";
 
 import {
   FormContainer,
@@ -18,11 +18,14 @@ import {
   FormError,
 } from "../../../components/forms/Forms";
 import { signInUser } from "../../../services/user.service";
-import { useDispatch } from "react-redux";
+
 import { userSignedIn } from "../../../store/auth/auth.slice";
+import { AppDispatch } from "../../../store/store";
+
+import passwordRegex from "../../../utils/password";
 
 const SignInForm: React.FC = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const formik = useFormik({
     initialValues: {

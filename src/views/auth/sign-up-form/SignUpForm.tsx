@@ -1,5 +1,6 @@
+import { useMemo } from "react";
 import { useFormik } from "formik";
-import { signUpUser, isUserUnique } from "../../../services/user.service";
+import { useDispatch } from "react-redux";
 import * as Yup from "yup";
 
 import {
@@ -16,16 +17,21 @@ import {
   LoginFormLink,
   LoginFormTitle,
 } from "../../../components/forms/LoginForm";
+
+import { signUpUser, isUserUnique } from "../../../services/user.service";
+
 import passwordRegex from "../../../utils/password";
-import { useMemo } from "react";
-import { useDispatch } from "react-redux";
+
 import { userSignedUp } from "../../../store/auth/auth.slice";
+import { AppDispatch } from "../../../store/store";
 
 const createDebouncedIsUserUniqueTestFunction = () => {
   const timeoutTime = 400;
-  let id: any = null;
+  let id: ReturnType<typeof setTimeout> | null = null;
   return async (email: string | undefined) => {
-    clearTimeout(id);
+    if (id) {
+      clearTimeout(id);
+    }
     const isUnique = await new Promise<boolean>(async (resolve, reject) => {
       id = setTimeout(async () => {
         try {
@@ -41,7 +47,7 @@ const createDebouncedIsUserUniqueTestFunction = () => {
 };
 
 const SignUpForm: React.FC = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const validationSchema = useMemo(() => {
     return Yup.object().shape({

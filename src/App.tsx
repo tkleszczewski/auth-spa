@@ -1,8 +1,6 @@
-import React, { Fragment } from "react";
+import { Fragment } from "react";
 import { useSelector } from "react-redux";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-
-import store from "./store/store";
 
 import { GlobalStyles } from "./App.styles";
 
@@ -14,8 +12,12 @@ import Main from "./views/main/Main";
 import Home from "./views/main/home/Home";
 import Protected from "./views/main/protected/Protected";
 
+import { RootState } from "./store/store";
+
 function App() {
-  const isUserLoggedIn = useSelector((state: any) => state.auth.isUserLoggedIn);
+  const isUserLoggedIn = useSelector(
+    (state: RootState) => state.auth.isUserLoggedIn
+  );
 
   return (
     <Fragment>
