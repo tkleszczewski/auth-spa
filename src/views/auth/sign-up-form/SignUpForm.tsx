@@ -25,26 +25,26 @@ import passwordRegex from "../../../utils/password";
 import { signUpUser } from "../../../store/auth/auth.slice";
 import { AppDispatch } from "../../../store/store";
 
-const createDebouncedIsUserUniqueTestFunction = () => {
-  const timeoutTime = 400;
-  let id: ReturnType<typeof setTimeout> | null = null;
-  return async (email: string | undefined) => {
-    if (id) {
-      clearTimeout(id);
-    }
-    const isUnique = await new Promise<boolean>(async (resolve, reject) => {
-      id = setTimeout(async () => {
-        try {
-          const isUniqueResponse = await isUserUnique(email);
-          resolve(isUniqueResponse);
-        } catch (error) {
-          resolve(true);
-        }
-      }, timeoutTime);
-    });
-    return isUnique;
-  };
-};
+// const createDebouncedIsUserUniqueTestFunction = () => {
+//   const timeoutTime = 400;
+//   let id: ReturnType<typeof setTimeout> | null = null;
+//   return async (email: string | undefined) => {
+//     if (id) {
+//       clearTimeout(id);
+//     }
+//     const isUnique = await new Promise<boolean>(async (resolve, reject) => {
+//       id = setTimeout(async () => {
+//         try {
+//           const isUniqueResponse = await isUserUnique(email);
+//           resolve(isUniqueResponse);
+//         } catch (error) {
+//           resolve(true);
+//         }
+//       }, timeoutTime);
+//     });
+//     return isUnique;
+//   };
+// };
 
 const SignUpForm: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -57,7 +57,14 @@ const SignUpForm: React.FC = () => {
         .test(
           "unique-email",
           "this email already exists",
-          createDebouncedIsUserUniqueTestFunction()
+          async (value: string | undefined) => {
+            try {
+              const isUniqueResponse = await isUserUnique(value);
+              return isUniqueResponse;
+            } catch (error) {
+              return true;
+            }
+          }
         ),
       password: Yup.string()
         .matches(
@@ -72,6 +79,7 @@ const SignUpForm: React.FC = () => {
         }),
     });
   }, []);
+
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -82,6 +90,9 @@ const SignUpForm: React.FC = () => {
       await dispatch(signUpUser(values));
     },
     validationSchema,
+    validateOnBlur: false,
+    validateOnChange: false,
+    validateOnMount: false,
   });
 
   return (
@@ -98,7 +109,7 @@ const SignUpForm: React.FC = () => {
             name="email"
             type="text"
           />
-          {formik.touched.email && formik.errors.email ? (
+          {formik.errors.email ? (
             <FormError>{formik.errors.email}</FormError>
           ) : null}
         </FormControlContainer>
@@ -112,7 +123,7 @@ const SignUpForm: React.FC = () => {
             name="password"
             type="password"
           />
-          {formik.touched.password && formik.errors.password ? (
+          {formik.errors.password ? (
             <FormError>{formik.errors.password}</FormError>
           ) : null}
         </FormControlContainer>
@@ -126,11 +137,11 @@ const SignUpForm: React.FC = () => {
             name="confirmPassword"
             type="password"
           />
-          {formik.touched.confirmPassword && formik.errors.confirmPassword ? (
+          {formik.errors.confirmPassword ? (
             <FormError>{formik.errors.confirmPassword}</FormError>
           ) : null}
         </FormControlContainer>
-        <LoginButton disabled={!(formik.isValid && formik.dirty)} type="submit">
+        <LoginButton disabled={formik.isSubmitting} type="submit">
           submit
         </LoginButton>
         <LoginFormInfo>

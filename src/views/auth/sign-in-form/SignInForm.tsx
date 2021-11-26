@@ -32,6 +32,9 @@ const SignInForm: React.FC = () => {
       email: "",
       password: "",
     },
+    validateOnMount: false,
+    validateOnBlur: false,
+    validateOnChange: false,
     validationSchema: Yup.object({
       email: Yup.string()
         .email("invalid format of email")
@@ -62,7 +65,7 @@ const SignInForm: React.FC = () => {
             onBlur={formik.handleBlur}
             value={formik.values.email}
           />
-          {formik.touched.email && formik.errors.email ? (
+          {formik.errors.email ? (
             <FormError>{formik.errors.email}</FormError>
           ) : null}
         </FormControlContainer>
@@ -76,11 +79,11 @@ const SignInForm: React.FC = () => {
             onBlur={formik.handleBlur}
             value={formik.values.password}
           />
-          {formik.touched.password && formik.errors.password ? (
+          {formik.errors.password ? (
             <FormError>{formik.errors.password}</FormError>
           ) : null}
         </FormControlContainer>
-        <LoginButton disabled={!(formik.isValid && formik.dirty)} type="submit">
+        <LoginButton disabled={formik.isSubmitting} type="submit">
           submit
         </LoginButton>
         <LoginFormInfo>
