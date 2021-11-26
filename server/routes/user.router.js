@@ -50,7 +50,6 @@ router.post("/sign-up", async (req, res) => {
           expiresIn: "14 days",
         },
         (err, encoded) => {
-          console.log(err);
           if (err) {
             return res
               .status(500)

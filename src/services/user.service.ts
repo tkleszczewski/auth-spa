@@ -1,6 +1,12 @@
 import axios from "axios";
 const baseUserUrl = "/api/user";
 
+const signInUser = async (values: { email: string; password: string }) => {
+  const response = await axios.post(`${baseUserUrl}/sign-in`, values);
+  const { data } = response;
+  return data;
+};
+
 const signUpUser = async (values: {
   email: string;
   password: string;
@@ -17,4 +23,4 @@ const isUserUnique = async (email: string | undefined) => {
   return !data.user;
 };
 
-export { signUpUser, isUserUnique };
+export { signInUser, signUpUser, isUserUnique };

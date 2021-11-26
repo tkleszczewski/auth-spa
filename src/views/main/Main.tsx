@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Outlet } from "react-router-dom";
+import { useSelector } from "react-redux";
 import Switch from "react-switch";
 
 import COLORS from "../../utils/colors";
@@ -21,6 +22,7 @@ import {
 
 const Main: React.FC = () => {
   const [isDarkModeOn, setIsDarkModeOn] = useState<boolean>(false);
+  const isUserLoggedIn = useSelector((state: any) => state.auth.isUserLoggedIn);
 
   useEffect(() => {
     if (isDarkModeOn) {
@@ -80,9 +82,11 @@ const Main: React.FC = () => {
           <MainNavLinkContainer>
             <MainNavLink to="/auth">Login</MainNavLink>
           </MainNavLinkContainer>
-          <MainNavLinkContainer>
-            <MainNavLink to="/protected">Protected route</MainNavLink>
-          </MainNavLinkContainer>
+          {isUserLoggedIn ? (
+            <MainNavLinkContainer>
+              <MainNavLink to="/protected">Protected route</MainNavLink>
+            </MainNavLinkContainer>
+          ) : null}
         </MainNavLinksContainer>
       </MainNav>
       <MainOutletContainer>

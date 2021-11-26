@@ -5,7 +5,7 @@ const FormControlContainer = styled.div``;
 
 const FormLabel = styled.label`
   font-size: 1.4rem;
-  display: block;
+  display: inline-block;
   padding: 8px 0;
 `;
 

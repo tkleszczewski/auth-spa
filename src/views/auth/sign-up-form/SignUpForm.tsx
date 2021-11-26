@@ -18,6 +18,8 @@ import {
 } from "../../../components/forms/LoginForm";
 import passwordRegex from "../../../utils/password";
 import { useMemo } from "react";
+import { useDispatch } from "react-redux";
+import { userSignedUp } from "../../../store/auth/auth.slice";
 
 const createDebouncedIsUserUniqueTestFunction = () => {
   const timeoutTime = 400;
@@ -39,6 +41,8 @@ const createDebouncedIsUserUniqueTestFunction = () => {
 };
 
 const SignUpForm: React.FC = () => {
+  const dispatch = useDispatch();
+
   const validationSchema = useMemo(() => {
     return Yup.object().shape({
       email: Yup.string()
@@ -71,8 +75,14 @@ const SignUpForm: React.FC = () => {
     onSubmit: async (values) => {
       try {
         const data = await signUpUser(values);
-        alert(JSON.stringify(data));
+        const { accessToken, user } = data;
+        localStorage.setItem("accessToken", accessToken);
+        dispatch(userSignedUp({ accessToken, user, isUserLoggedIn: true }));
       } catch (error: any) {
+        localStorage.setItem("accessToken", "");
+        dispatch(
+          userSignedUp({ accessToken: "", user: null, isUserLoggedIn: false })
+        );
         alert(error.response.data.message);
       }
     },

@@ -17,8 +17,13 @@ import {
   FormInput,
   FormError,
 } from "../../../components/forms/Forms";
+import { signInUser } from "../../../services/user.service";
+import { useDispatch } from "react-redux";
+import { userSignedIn } from "../../../store/auth/auth.slice";
 
 const SignInForm: React.FC = () => {
+  const dispatch = useDispatch();
+
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -35,8 +40,19 @@ const SignInForm: React.FC = () => {
         )
         .required("password is required"),
     }),
-    onSubmit(values) {
-      alert(JSON.stringify(values));
+    onSubmit: async (values: { email: string; password: string }) => {
+      try {
+        const data = await signInUser(values);
+        const { accessToken, user } = data;
+        localStorage.setItem("accessToken", accessToken);
+        dispatch(userSignedIn({ accessToken, user, isUserLoggedIn: true }));
+      } catch (err: any) {
+        localStorage.setItem("accessToken", "");
+        dispatch(
+          userSignedIn({ accessToken: "", user: null, isUserLoggedIn: false })
+        );
+        alert(err.response.data.message);
+      }
     },
   });
 
