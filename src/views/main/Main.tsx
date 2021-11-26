@@ -10,6 +10,8 @@ import { checkAuthToken } from "../../services/auth.service";
 import { AppDispatch, RootState } from "../../store/store";
 import { tokenChecked, userLoggedOut } from "../../store/auth/auth.slice";
 
+import PuffLoader from "react-spinners/PuffLoader";
+
 import {
   MainContainer,
   MainHeader,
@@ -76,7 +78,9 @@ const Main: React.FC = () => {
           return;
         }
       } catch (err: any) {
-        alert(err.response.data.message);
+        if (err.reponse) {
+          alert(err.response.data.message);
+        }
         setCheckTokenRequestPending(false);
       }
     }
@@ -141,7 +145,18 @@ const Main: React.FC = () => {
             <Outlet></Outlet>
           </MainOutletContainer>
         </Fragment>
-      ) : null}
+      ) : (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "calc(100% - 60px)",
+          }}
+        >
+          <PuffLoader />
+        </div>
+      )}
     </MainContainer>
   );
 };

@@ -145,7 +145,9 @@ router.post("/is-unique", async (req, res) => {
   try {
     const user = await User.findOne({ email });
     if (user) {
-      return res.status(200).json({ success: true, user });
+      return res
+        .status(200)
+        .json({ success: true, user: { email: user.email } });
     } else {
       return res.status(404).json({ success: false, user: null });
     }
