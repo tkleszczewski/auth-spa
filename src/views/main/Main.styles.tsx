@@ -93,6 +93,27 @@ const MainNavLink = styled(NavLink)`
   }
 `;
 
+const MainNavLogoutButtonContainer = styled.li`
+  display: flex;
+  align-items: center;
+  height: 100%;
+  margin-left: auto;
+`;
+
+const MainNavLogoutButton = styled.button`
+  border: 1px solid var(--text-color);
+  color: var(--text-color);
+  background-color: #ccc;
+  padding: 8px 16px;
+  cursor: pointer;
+  border-radius: 4px;
+
+  &:hover {
+    color: crimson;
+    border: 1px solid crimson;
+  }
+`;
+
 export {
   MainContainer,
   MainHeader,
@@ -106,4 +127,6 @@ export {
   MainNavLinksContainer,
   MainNavLinkContainer,
   MainNavLink,
+  MainNavLogoutButtonContainer,
+  MainNavLogoutButton,
 };

@@ -28,12 +28,14 @@ function App() {
             {isUserLoggedIn ? (
               <Route path="protected" element={<Protected />} />
             ) : null}
-            <Route path="auth" element={<Auth />}>
-              <Route index element={<Navigate to="/auth/sign-in" />} />
-              <Route path="*" element={<Navigate to="/auth/sign-in" />} />
-              <Route path="sign-in" element={<SignInForm />} />
-              <Route path="sign-up" element={<SignUpForm />} />
-            </Route>
+            {!isUserLoggedIn ? (
+              <Route path="auth" element={<Auth />}>
+                <Route index element={<Navigate to="/auth/sign-in" />} />
+                <Route path="*" element={<Navigate to="/auth/sign-in" />} />
+                <Route path="sign-in" element={<SignInForm />} />
+                <Route path="sign-up" element={<SignUpForm />} />
+              </Route>
+            ) : null}
           </Route>
         </Routes>
       </BrowserRouter>

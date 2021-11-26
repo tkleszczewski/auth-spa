@@ -1,7 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, Fragment } from "react";
 import { Outlet } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Switch from "react-switch";
+
+import { checkAuthToken } from "../../services/auth.service";
+
+import { tokenChecked, userLoggedOut } from "../../store/auth/auth.slice";
 
 import COLORS from "../../utils/colors";
 
@@ -18,11 +22,21 @@ import {
   MainNavLinkContainer,
   MainNavLinksContainer,
   MainNavLink,
+  MainNavLogoutButtonContainer,
+  MainNavLogoutButton,
 } from "./Main.styles";
 
 const Main: React.FC = () => {
+  const dispatch = useDispatch();
   const [isDarkModeOn, setIsDarkModeOn] = useState<boolean>(false);
+  const [checkTokenRequestPending, setCheckTokenRequestPending] =
+    useState<boolean>(true);
   const isUserLoggedIn = useSelector((state: any) => state.auth.isUserLoggedIn);
+
+  const handleLogout = useCallback(() => {
+    localStorage.removeItem("accessToken");
+    dispatch(userLoggedOut());
+  }, [dispatch]);
 
   useEffect(() => {
     if (isDarkModeOn) {
@@ -45,6 +59,26 @@ const Main: React.FC = () => {
       );
     }
   }, [isDarkModeOn]);
+
+  useEffect(() => {
+    async function checkToken() {
+      try {
+        setCheckTokenRequestPending(true);
+        const data = await checkAuthToken();
+        setCheckTokenRequestPending(false);
+        if (data && data.success && data.message === "token valid") {
+          const { accessToken, user } = data;
+          dispatch(tokenChecked({ accessToken, user, isUserLoggedIn: true }));
+        } else {
+          return;
+        }
+      } catch (err: any) {
+        alert(err.response.data.message);
+        setCheckTokenRequestPending(false);
+      }
+    }
+    checkToken();
+  }, [dispatch]);
 
   const onDarkModeToggle = (checked: boolean) => {
     setIsDarkModeOn(checked);
@@ -74,24 +108,37 @@ const Main: React.FC = () => {
           </SwitchContainer>
         </MainHeaderWidthLimiter>
       </MainHeader>
-      <MainNav>
-        <MainNavLinksContainer>
-          <MainNavLinkContainer>
-            <MainNavLink to="/">Home</MainNavLink>
-          </MainNavLinkContainer>
-          <MainNavLinkContainer>
-            <MainNavLink to="/auth">Login</MainNavLink>
-          </MainNavLinkContainer>
-          {isUserLoggedIn ? (
-            <MainNavLinkContainer>
-              <MainNavLink to="/protected">Protected route</MainNavLink>
-            </MainNavLinkContainer>
-          ) : null}
-        </MainNavLinksContainer>
-      </MainNav>
-      <MainOutletContainer>
-        <Outlet></Outlet>
-      </MainOutletContainer>
+      {!checkTokenRequestPending ? (
+        <Fragment>
+          <MainNav>
+            <MainNavLinksContainer>
+              <MainNavLinkContainer>
+                <MainNavLink to="/">Home</MainNavLink>
+              </MainNavLinkContainer>
+              {!isUserLoggedIn ? (
+                <MainNavLinkContainer>
+                  <MainNavLink to="/auth">Login</MainNavLink>
+                </MainNavLinkContainer>
+              ) : null}
+              {isUserLoggedIn ? (
+                <MainNavLinkContainer>
+                  <MainNavLink to="/protected">Protected route</MainNavLink>
+                </MainNavLinkContainer>
+              ) : null}
+              {isUserLoggedIn ? (
+                <MainNavLogoutButtonContainer>
+                  <MainNavLogoutButton onClick={handleLogout}>
+                    Logout
+                  </MainNavLogoutButton>
+                </MainNavLogoutButtonContainer>
+              ) : null}
+            </MainNavLinksContainer>
+          </MainNav>
+          <MainOutletContainer>
+            <Outlet></Outlet>
+          </MainOutletContainer>
+        </Fragment>
+      ) : null}
     </MainContainer>
   );
 };

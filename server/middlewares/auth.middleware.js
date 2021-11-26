@@ -44,6 +44,7 @@ const authMiddleware = async (req, res, next) => {
           }
 
           req.user = user;
+          req.accessToken = authorizationSplitted[1];
 
           return next();
         } catch (error) {

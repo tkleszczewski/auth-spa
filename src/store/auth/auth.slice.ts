@@ -18,9 +18,20 @@ export const authSlice = createSlice({
       state.user = action.payload.user;
       state.isUserLoggedIn = action.payload.isUserLoggedIn;
     },
+    userLoggedOut: (state) => {
+      state.accessToken = "";
+      state.user = null;
+      state.isUserLoggedIn = false;
+    },
+    tokenChecked: (state, action) => {
+      state.accessToken = action.payload.accessToken;
+      state.user = action.payload.user;
+      state.isUserLoggedIn = action.payload.isUserLoggedIn;
+    },
   },
 });
 
-export const { userSignedIn, userSignedUp } = authSlice.actions;
+export const { userSignedIn, userSignedUp, userLoggedOut, tokenChecked } =
+  authSlice.actions;
 
 export default authSlice.reducer;
